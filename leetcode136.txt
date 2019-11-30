@@ -1,0 +1,15 @@
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        mydict={}
+        for num in nums:
+            try:
+                mydict.pop(num)
+            except:
+                mydict[num]=1
+        return list(mydict.keys())[0]
+#python的pop代码
+
+知识点：
+栈的思想
+pop的用法
+try except的用法
