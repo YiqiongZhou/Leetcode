@@ -1,0 +1,42 @@
+class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        nums.sort()
+
+        ans = []
+        k = 0
+        while k < len(nums)-2:
+
+            if nums[k] > 0:
+                return ans
+            i = k + 1
+            j = len(nums) - 1
+            while i < j:
+                mySum = nums[k] + nums[i] + nums[j]
+                #print(nums[k] ,nums[i] , nums[j])
+                if mySum == 0:
+                    ans.append([nums[i], nums[j], nums[k]])
+                    while nums[j] == nums[j - 1]and i<j:
+                        j -= 1
+                    j-=1
+                    while nums[i] == nums[i+1] and i<j:
+                        i += 1
+                    i+=1
+                elif mySum > 0:
+                    j -= 1
+                else:
+                    i += 1
+
+            while nums[k + 1] == nums[k] and k<len(nums)-2:
+                k += 1
+            k+=1
+
+        return ans
+        
+
+
+
+三数之和：
+确定一个顺序滑动的索引
+再加上从它右边开始一头一尾的两个指针
+n^2的时间复杂度
+边界问题：两指针滑动 要注意while i<j要一直在里层也要有
