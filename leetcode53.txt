@@ -1,0 +1,28 @@
+最大字序和
+判断出多个dp(i)（len长度的）以这个元素结尾的最大子序和
+因为 最大子数组和 对应的区间 总要以某个元素为结尾, 将这个结尾的元素指定为A[j]. 这样的指定不失一般性.
+找出最大的dp（i）这么多元素结尾 哪一个是
+dp[i]的最大子序和 取决于 nums[i] 和dp[i]+nums[i]
+
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        dp=nums.copy()
+        dp[0]=nums[0]
+        ans=dp[0]
+        for i in range(1,len(nums)):
+            dp[i]=max(nums[i],dp[i-1]+nums[i])
+            ans=max(dp[i],ans)
+
+        return ans
+暴力法
+
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        mymax=nums[0]
+        for i in range(len(nums)):
+            mysum=0
+            for j in range(i,len(nums)):
+                mysum+=nums[j]
+                if mysum>mymax:
+                    mymax=mysum
+        return mymax
