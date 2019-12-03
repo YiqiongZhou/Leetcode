@@ -1,0 +1,49 @@
+注意奇偶数的初始化会带来边界问题
+注意初始化
+
+和最大子序和不同
+这里的list中都为正数
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        if len(nums)==0:
+            return 0
+        if len(nums)==1:
+            return nums[0]
+        ans=max(nums[0],nums[1])
+        dp =[0]* len(nums)
+        dp[0]=nums[0]
+        dp[1]=max(nums[0],nums[1])
+        for i in range(2,len(nums)):
+            j=i-2
+            while j>=0:
+                ans=max(dp[j]+nums[i],ans)
+                j-=1
+            dp[i]=ans
+          
+        return ans
+
+-------
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        if len(nums)==0:
+            return 0
+
+        if len(nums)==1:
+            return nums[0]
+        ans=nums[0]
+        dp=[0]*len(nums)
+        dp[0]=nums[0]
+        dp[1]=max(nums[1],nums[0])
+
+        for i in range(2,len(nums)):
+            dp[i]=max(dp[i-1],dp[i-2]+nums[i])
+
+          
+        return dp[len(nums)-1]
+
+       
+        
+---
+还可以dp索引整体往前推一位
+       
+        

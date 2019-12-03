@@ -1,0 +1,26 @@
+1.找确定的边界
+34题：
+2.找模糊的边界
+3.旋转过的排序数组
+33题
+4.不定长的边界
+
+贪婪算法253
+
+def BinarySerach(nums,target):
+    low=0
+    high=len(nums)-1
+    while low<high:
+        mid=(low+high)//2
+
+        if nums[mid]==target:
+            return mid
+        elif nums[mid]<target:
+            low=mid+1 #注意+1
+        else:
+            high=mid-1
+    return
+
+
+a=[2,4, 5, 12, 14, 23]
+print(BinarySerach(a,14))

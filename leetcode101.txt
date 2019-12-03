@@ -1,0 +1,24 @@
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def isSymmetric(self, root: TreeNode) -> bool:
+        def myFunc(root1: TreeNode,root2: TreeNode):
+            #只是为了比较这两个点（节点值）
+            if root1==None and root2==None:
+                return True
+            if root1==None or root2==None:
+                return False
+            return root1.val==root2.val and (myFunc(root1.left,root2.right)) and (myFunc(root1.right,root2.left))
+
+        return myFunc(root,root)
+
+
+        
+二叉树
+递归
+一个个节点下去
