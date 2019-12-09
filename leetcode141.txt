@@ -1,0 +1,22 @@
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+#哈希存储节点 是否被存储过
+#快慢指针 追及问题
+class Solution(object):
+    def hasCycle(self, head):
+        """
+        :type head: ListNode
+        :rtype: bool
+        """
+        mydict=[]
+        mydata=head
+        while mydata is not None:
+            if mydata in mydict:
+                return True
+            else:
+                mydict.append(mydata)
+            mydata=mydata.next
+        return False
