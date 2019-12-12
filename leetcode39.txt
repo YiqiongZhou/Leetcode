@@ -1,0 +1,36 @@
+#排序作剪枝
+
+剪枝（减少前面重复过的可能的解）
+class Solution(object):
+    def combinationSum(self, candidates, target):
+        """
+        :type candidates: List[int]
+        :type target: int
+        :rtype: List[List[int]]
+        """
+        ans=[]
+        def search(target,begin,path):
+            if target==0:
+                #append不加[：] 就是引用，会跟着path变
+                ans.append(path[:])
+                
+               
+            
+            for index in range(begin,len(candidates)):
+                #从小到大正序查找（一颗树的分支下来，一个比一个大）
+                res=target-candidates[index]
+                if res<0:
+                    break
+                    #跳过后面的循环
+                path.append(candidates[index])
+                search(res,index,path)
+                
+                path.pop()
+                
+
+        if not candidates:
+            return []
+        candidates.sort()
+        search(target,0,[])
+        
+        return ans

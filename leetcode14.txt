@@ -1,0 +1,22 @@
+class Solution(object):
+    def longestCommonPrefix(self, strs):
+        """
+        :type strs: List[str]
+        :rtype: str
+        """
+
+        #字符串截取 ，查找
+#一个个的去比，以第一个字符串为比较对象
+        if len(strs)==0:
+            return ""
+
+        prefix=strs[0]
+
+        for i in range(len(strs)):
+            while strs[i].find(prefix)!=0:
+                prefix=prefix[0:len(prefix)-1]
+            if prefix=="":
+                return prefix
+        return prefix
+
+        
