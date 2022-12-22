@@ -33,7 +33,7 @@ var nextPermutation = function(nums) {
         }
     }
 
-    //从后往前找到，比升序的i-1大的第一个数
+    //从后往前找到，比升序的i-1大的第一个数，然后交换
     for(let i=nums.length-1;i>minIndex;i--){
         if(nums[i]>nums[minIndex]){
             swap(i,minIndex);
