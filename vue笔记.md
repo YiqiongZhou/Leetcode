@@ -115,8 +115,8 @@ new Promise（（revolve，reject）={
 promise的三种状态：pendging、fulfilled、rejected
 Promise 是异步编程的一种解决方案：从语法上讲，promise是一个对象，从它可以获取异步操作的消息；从本意上讲，它是承诺，承诺它过一段时间会给你一个结果。
 
-.async await是基于Promise实现的，可以说是改良版的Promise，它不能用于普通的回调函数
- 
+.async await是基于Promise实现的，可以说是改良版的Promise，它不能用于普通的回调函数。
+错误用try catch捕获
 
 16.多个组件的通信
 
@@ -196,6 +196,57 @@ Object.defineProperty(person,'sex',{
     value:"男"
 })
 console.log(person)
+
+Vue2的响应式：（如果是对象主要通过Object.defineProperty中的set来监听实现，如果是数组，只能通过push等方法监听改变） 
+如果直接新增一个属性，或者数组里直接通过索引赋值（但原地变更数组的几个方法可以使数组的变化被响应到，
+比如push,pop等，或者数组直接赋值，也可以），响应式的set并不会加进去。
+可以通过Vue.set()增加响应式来解决。或vm.$set,但不能给vm的根数据对象添加属性
+
+Vue3的响应式：
+vue2中存在一些问题： 新增属性、删除属性不会自动更新；直接通过下标 修改数组，不会更新
+Vue3不存在这些问题
+vue是用了proxy代替object.defineProperty
+new Proxy(person,{
+    //读取某个属性时调用
+    get(target,propNm)
+    //修改或追加某个属性时调用，
+    set(target,propNm,value)
+    //删除某个属性时调用
+    defineProperty(target,propNm )
+})
+reflect :对被代理对象的属性进行操作
+
+
+单向绑定（v-bind）：是能从data流向页面
+双向绑定（v-model）：不仅能从data流向页面，还能从页面流向data，一般用在表单类元素上
+
+
+vue2:
+defineProperty 劫持监听所有data中的所有属性（递归+遍历+setter）
+官方：每个组件实例都对应一个 watcher 实例，它会在组件渲染的过程中把“接触”过的数据 property 记录为依赖。之后当依赖项的 setter 触发时，会通知 watcher，从而使它关联的组件重新渲染。 
+
+mvvm 双向绑定，采用数据劫持结合发布者-订阅者模式的方式，通过 Object.defineProperty()来劫持各个属性的 setter、getter，在数据变动时发布消息给订阅者，触发相应的监听回调。
+ 
+需要 observe 的数据对象进行递归遍历，包括子属性对象的属性，都加上 setter 和 getter
+这样的话，给这个对象的某个值赋值，就会触发 setter，那么就能监听到了数据变化
+
+compile 解析模板指令，将模板中的变量替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，更新视图
+
+Watcher 订阅者是 Observer 和 Compile 之间通信的桥梁，主要做的事情是:
+在自身实例化时往属性订阅器(dep，也就是依赖)里面添加订阅者
+自身必须有一个 update() 方法
+待属性变动 dep.notify() 通知时，能调用自身的 update() 方法，并触发 Compile 中绑定的回调，则功成身退。
+
+https://www.lmonkey.com/t/mLK2pemy3
+
+
+
+22.splice数组
+splice 方法用于数组或伪数组，根据参数个数和形式的不同，可以在数组中删除指定元素或者插入元素、替换元素
+
+23.闭包；
+内存泄漏：用不到（访问不到）的变量，依然占据着内存空间，不能再次被利用起来
+
     
 
 
