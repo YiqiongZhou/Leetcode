@@ -15,6 +15,7 @@ var decodeString = function(s) {
     const func=((myStr)=>{
 
         if(myStr[0]!=='['){
+            
             return myStr.substring(1,myStr.length);
         }
        

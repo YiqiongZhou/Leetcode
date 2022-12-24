@@ -68,23 +68,33 @@ var findKthLargest = function (nums, k) {
     //     swap(nums, left, ge);
     //     return ge;
     // });
-    const partition = ((nums, left, right) => {
+    const partition = ((nums, low, high) => {
 
         // let base = left;
-        //base 打乱顺序
-        let low=left;
-        let base=Math.floor(Math.random()*(right-left))+left;
+        // base 打乱顺序
+        // let low=left;
+        let base=Math.floor(Math.random()*(high-low))+low;
         let pivot=nums[base];
-        swap(nums,left,base);
-        
+        let left = low;
+        let right = high;
+        swap(nums,low,base);
+
+        //有个等号 nums[right] >=pivot
+        //先是right变
+
+        // let left = low;
+        // let right = high;
+        // let pivot = nums[low];
 
         while (left < right) {
-            while (nums[left] < pivot && left<right) {
-                left += 1;
-            }
-            while (nums[right] > pivot && left <right) {
+            while (nums[right] >=pivot && left <right) {
                 right -= 1;
             }
+
+            while (nums[left] <=pivot && left<right) {
+                left += 1;
+            }
+
             if (left < right) {
                 swap(nums, left, right);
             } 
@@ -92,8 +102,40 @@ var findKthLargest = function (nums, k) {
                 // partition(nums,base,left);
         }
         swap(nums, low, left);
-        return left;  
+        return right;  
     });
+
+
+    // function partition(nums, low, high) {
+
+    //     let left = low;
+    //     let right = high;
+    //     let base = nums[low];
+
+    //     if (left > right) {
+    //         return;
+    //     }
+    //     while (left < right) {
+
+    //         while (nums[right] >= base && left < right) {
+    //             right -= 1
+    //         }
+
+    //         while (nums[left] <= base && left < right) {
+    //             left += 1
+    //         }
+
+
+    //         if (left < right) {
+    //             swap(nums, left, right);
+    //         }
+    //     }
+    //     swap(nums, low, left);
+    //     // console.log(nums,right)
+    //     return right;
+    //     // QuickSort(nums, low, right - 1);
+    //     // QuickSort(nums, right + 1, high);
+    // }
 
     // left 要等于right才能找到，才是最终确定的唯一位置
     while (left <= right) {  
