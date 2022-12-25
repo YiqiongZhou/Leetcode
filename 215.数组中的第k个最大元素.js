@@ -80,7 +80,7 @@ var findKthLargest = function (nums, k) {
         swap(nums,low,base);
 
         //有个等号 nums[right] >=pivot
-        //先是right变
+        //先是right变，如果基准值在左边，就是right先走，这样就能保证相遇位置数值<key
 
         // let left = low;
         // let right = high;

@@ -10,27 +10,34 @@
  * @return {string}
  */
 var decodeString = function(s) {
-    let ans="";
+    let res="";
+    let mulit=[];
+    let digit=0;
+    let ans=[];
 
-    const func=((myStr)=>{
 
-        if(myStr[0]!=='['){
+    for(char of s){
+        if(char==='['){
+            mulit.push(digit);
+            ans.push(res);
+            digit=0;
+            res="";
+
+        }else if( char>='0' && char<='9'){
+            temp=Number(char);
+            digit=10*digit+temp;
             
-            return myStr.substring(1,myStr.length);
+        }else if(char===']'){
+            multiTemp=mulit.pop();
+            str=ans.pop();
+            res=str+res.repeat(multiTemp);
+        }else{
+            res+=char;
         }
-       
-        for(let i=0;i<myStr.length-1;i++){
-            if(myStr[i+1]==='['){
-                temp=func(myStr[i+1,myStr.length-1])
-                for(let j=0;j<myStr[i];j++){
-                    ans+=temp;
-                }
-            }
+    }
 
-        }
-
-
-    })
+    return res;
+   
 
 
 
