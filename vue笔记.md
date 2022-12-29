@@ -117,11 +117,157 @@ Promise 是异步编程的一种解决方案：从语法上讲，promise是一�
 
 .async await是基于Promise实现的，可以说是改良版的Promise，它不能用于普通的回调函数。
 错误用try catch捕获
+async 函数返回的是一个 Promise 对象。async 函数（包含函数语句、函数表达式）会返回一个 Promise 对象，如果在函数中 return 一个直接量，async 会把这个直接量通过 Promise.resolve() 封装成 Promise 对象。再用then进行处理
+如果没有返回对象，则会返回undefined
 
-16.多个组件的通信
+
+16.父子组件的通信
+1.props 和emit
+父组件给子组件传值：props
+子组件给父组件传值：子组件通过 $emit() 来触发事件，定义好要触发的事件名称并传递参数，
+而父组件通过 $on() 来监听事件，绑定到对应的方法中
+父组件：
+<com-article  @onEmitIndex="onEmitIndex"></com-article>
+
+  methods: {
+    onEmitIndex(idx) {
+      this.currentIndex = idx
+    }
+
+子组件：
+
+<div @click="emitIndex(index)">{{item}}</div>
+  methods: {
+    emitIndex(index) {
+      this.$emit('onEmitIndex', index) // 触发父组件的方法，并传递参数index
+    }
 
 
-17.vuex
+2.可以通过在子组件添加ref属性，然后可以通过ref属性名称获取到子组件的实例
+父组件里：
+<child ref="child"></child>
+this.$refs.child.name
+this.$refs.child.sayHello()
+
+3.$parent +$children,$parent是vue的一个实例属性，它表示的就是当前组件的父实例。
+假如父组件中有一个方法为sayYes，那么在子组件中就可以直接使用this.$parent.sayYes去调用父组件的方法
+this.$children[0].number 是父组件调用子组件的方式
+
+跨级通信：
+4. provide   +inject：父组件可以向其所有子组件传入数据，而不管子组件层次解构有多深
+父组件：
+    data(){}
+    provide:{
+        text:'provide注入的内容：111'
+    }
+子组件：
+    data(){}    
+    inject：['text']
+
+调用的时候就直接：this.text
+5.$attrs + $ilsteners
+bus
+vuex
+
+兄弟通信：
+bus
+vuex
+
+17。多个组件的通信
+Bus全局事件总线：任意组件间通信：在触发地通过$emit向外发布一个事件，在需要监听的页面通过$on监听事件。
+  
+使用方式：
+多种写法https://www.cnblogs.com/linjiangxian/p/15852298.html
+1.在main.js里面创建挂载原型（直接在vue实例上绑定）
+ Vue.prototype.$bus=new Vue();
+ 或者new Vue({
+    el:'',
+    beforeCreate(){
+        Vue.prototype.$bus=this; //安装全局总线
+    }
+ })
+2.需要传值组件的写法：
+ methods:{
+    nameTop(v){
+        this.$bus.$emit("sonName",this,name);
+    }
+ }
+3.需要接受值的组件：
+created(){
+    this.$bus.$on("sonName",(val)=>{
+        console.log(val);
+    });
+}
+
+第二种写法：
+
+
+vuex
+https://blog.csdn.net/qq_44182284/article/details/125460217?spm=1001.2014.3001.5501
+专门在vue中实现集中式状态（数据）管理的一个Vue插件（数据和状态的共享）
+什么时候使用vuex：
+1. 多个组件依赖于同一种状态 2.来自不同组件的行为需要变更同一状态
+有个store：store里面
+（调用的地方写dispath this.$store.dispatch，如果没有业务逻辑，就直接this.$store.commit）
+actions：是个对象，用于响应组件中的动作（里面写业务逻辑，commit）
+mutations：用于操作数据（操作state,实现操作数据的方法，比如加减） 
+state：用于存储数据
+getters：用于将state中的属性进行加工（有点类似computed）
+
+
+mapState:自动生成代码，用于帮助我们映射state中的数据为计算属性
+//借助mapState生成计算属性，从state中读取数据
+import {mapState, mapGetters} from 'Vuex'
+本来的：
+computed:{
+    he(){
+        return this.$store.state.sum;
+    },
+    xuexiao(){
+        return this.$store.state.school;
+    },
+    bigSum(){
+        return this.$stote.getters.bigSum; 
+    }
+}
+改为(等同于以上)
+computed:{
+    ...mapState({he:'sum',xuexiao:'school'}) //对象写法
+
+}
+
+如果两边的变量同名(数组写法)
+computed:{
+    sum(){  
+        return this.$store.state.sum;
+    }
+}
+则为：
+computed:{
+    ...mapState(['sum','school']) //数组写法
+    ...mapGetters(['bigS um']) //数组 写法
+}
+
+mapMutations: 借助mapMutations生成对应的方法，方法中会调用commit去联系mutations
+mapActions：调用dispatch
+import {mapMutations} from 'Vuex'
+本来的：
+methods:{
+    increment(n){
+        this.$store.commit("JIA",n);
+    },
+    decrement(){
+        this.$store.commit("JIAN",1);
+    }
+    改成：
+    ...mapState({increment:'JIA',decrement:'JIAN'}) //对象写法
+     ...mapState(['JIA'，'JIAN']) //数组写法
+}
+改为：
+
+
+
+
  
 18.router
 router 是路由器，route是路由
@@ -153,7 +299,7 @@ routes:[
 
 
 20.Router
-router-link  背后是个a标签，实现路由的切换
+router-link  背后是个a标签，实现路由的切换 
 router-view 类似插槽，指定展示位置
 
 pages 文件夹 路由组件（不会出现<myComponent></myComponent>,通过router制定
@@ -177,6 +323,12 @@ ${}是占位符 英文模式下+数字键盘1左边的键。 就可以直接打�
 params： /home/1/你好哇 对象只能用name不能用path
 (配置路由)要在injex.js 的path里面添加占位符 /home/:id/:title 
 
+区别：
+接收参数的方式不同，一个用this.$ route.query.id，一个用this.$ route.params.id
+query可以用path或name编写传参地址，params只能用name
+query在刷新页面时，参数不会消失，params刷新页面，参数会消失，可以在路由中配置/：id（/:参数）来实现刷新不丢失参数
+query传来的参数会暴露在地址栏中，类似于get请求，params传递的参数不会暴露在地址栏，类似于post请求，可以在路由中配置/:参数，那样参数也会暴露在地址栏
+
 
 21.ajax axios
 
@@ -188,14 +340,14 @@ obj :  第一个参数就是要在哪个对象身上添加或者修改属性
 prop : 第二个参数就是添加或修改的属性名
 desc ： 配置项，一般是一个对象（有自定义属性、还有默认的get set方法、enumerable等
 
- let  person = {
-        name:"码农",
-        age: 18
-    }
-Object.defineProperty(person,'sex',{
-    value:"男"
-})
-console.log(person)
+    let  person = {
+            name:"码农",
+            age: 18
+        }
+    Object.defineProperty(person,'sex',{
+        value:"男"
+    })
+    console.log(person)
 
 Vue2的响应式：（如果是对象主要通过Object.defineProperty中的set来监听实现，如果是数组，只能通过push等方法监听改变） 
 如果直接新增一个属性，或者数组里直接通过索引赋值（但原地变更数组的几个方法可以使数组的变化被响应到，
@@ -206,14 +358,16 @@ Vue3的响应式：
 vue2中存在一些问题： 新增属性、删除属性不会自动更新；直接通过下标 修改数组，不会更新
 Vue3不存在这些问题
 vue是用了proxy代替object.defineProperty
-new Proxy(person,{
-    //读取某个属性时调用
-    get(target,propNm)
-    //修改或追加某个属性时调用，
-    set(target,propNm,value)
-    //删除某个属性时调用
-    defineProperty(target,propNm )
-})
+
+    new Proxy(person,{
+        //读取某个属性时调用
+        get(target,propNm)
+        //修改或追加某个属性时调用，
+        set(target,propNm,value)
+        //删除某个属性时调用
+        defineProperty(target,propNm )
+    })
+
 reflect :对被代理对象的属性进行操作
 
 
@@ -244,8 +398,172 @@ https://www.lmonkey.com/t/mLK2pemy3
 22.splice数组
 splice 方法用于数组或伪数组，根据参数个数和形式的不同，可以在数组中删除指定元素或者插入元素、替换元素
 
-23.闭包；
+### 23.闭包
+如果一个函数访问了此函数的父级及父级以上的作用域变量，就可以称这个函数是一个闭包。
 内存泄漏：用不到（访问不到）的变量，依然占据着内存空间，不能再次被利用起来
+
+满足闭包的四个条件
+
+fb就是闭包函数：
+
+    function fa(){
+        let a=10;
+        function fb(){
+            a-=1;
+            console.log(a)
+        }
+        return fb;
+    }
+     var fm=fa();//完成这个才是闭包
+     fm=null;
+
+1.有函数嵌套：函数a里面还用了函数b
+2.内部函数引用外部的局部变量
+3、返回值是函数（return fb（））
+4.创建一个对象函数，让其长期驻留var fm=fa();
+
+用完后，可以把它释放掉，不用担心内存泄漏（fm=null;)
+
+为什么需要闭包
+因为全局变量容易污染环境，而局部变量又无法长期驻留内存，所以需要一种机制，
+既能长期保存变量，又不污染全局
+
+闭包为什么能长期保存变量：
+内存回收机制：不再用到的内存空间，系统会定期（周期性）自动进行清理出空间提供给其他程序使用
+而某一个变量或者对象被引用，就不会被回收，因为被引用代表着被使用，回收机制不会对正在引用的变量或对象进行回收的。
+
+上面的例子中：
+fm是一个全局变量，代码执行完毕不会立即销毁
+fm可以找到fn()函数，fa()函数return fb(),因此 fb()也不会销毁。
+fb()引用到了父级作用域的a，因此，在引用的a便不会被垃圾回收机制回收。
+
+此时，
+
+闭包的优缺点：
+缺点：引起内存泄漏问题（函数的变量一直保存在自己内存中）
+
+
+### 24 var 与let的区别（let语法更严谨）
+1.var可以重复声明变量：let和const 不能
+var a=10;
+var a=20;
+2.var的变量提升：可以先使用，后声明：
+console.log(c)
+var c=50;
+let没有变量提升，不能先使用，再声明
+3.块作用域（块作用域由 { } 包括，if语句和for语句里面的{ }也属于块作用域，是在大括号{}里面的内容, ）
+let 有块作用域
+var没有块级作用域，（可以使用闭包保护内部变量）
+
+let和const的区别
+const是常量，使用时必须初始化(即必须赋值)，
+相同点：只能在块作用域里访问，而且不能修改。
+
+
+变量提升：一个函数或变量的声明会被提到作用域的最顶端
+高阶说法：其实let和const也存在变量提升，但他存在暂时性死区，这导致这个阶段以内（显示赋值之前），任何对变量的读写都会报错 
+从代码块(block)起始（{）到变量求值(包括赋值)以前的这块区域，称为该变量的暂时性死区。
+变量会提升，但初始化不会提升，var会初始化提升，会被赋值为undefined。
+
+### 25。CSS水平居中的几种方式
+水平居中：水平方向居中
+
+
+
+ajax：
+Ajax 是⼀种在⽆需重新加载整个⽹⻚的情况下，能够更新部分⽹⻚的技术。是一种思想。传统的技术如果要更新，
+ 必须要重载整个网页
+fetch是一种API，es6后出现的，是基于Promise对象  ，脱离了XHr    
+AXIOS 是一个基于Promise的网络请求库，基于XHR封装
+
+
+手撕Promise
+轮播图
+xmlHttpRequest  来实现ajax
+
+
+websocket
+
+### 26 el
+el和$mount 是一样的
+el:'#app' 
+v.$mount('#app') 表示把vue对象挂载到id为app的模板中
+ 
+data的写法有
+对象式
+data:{
+    nums:1
+}
+函数式（组件里只能写成函数式，否则data是一个对象的话，不同的组件调用改一个属性，全部组件的属性都会变）
+data:function(){
+    return{
+        nums:1
+    }
+}
+简写为
+data(){
+     return{
+        nums:1
+    } 
+}
+
+
+组件本质是一个名为VueComponent的构造函数，是Vue.extend生成的
+<school></school> vue解析时，会帮我们创建组件的实例对象,即vue帮我们执行的new VueCo  mponent(options)
+每次调用Vue.extend，都是一个全新的VueComponent
+关于this指向： 
+组件配置中：data 、method、watch、computed的this 均是VueComponent实例对象（组件实例对象）
+new Vue（options）中，this是Vue实例对象 
+VueComponent.prototype._proto_ === Vue.prototype
+vc实例的原型是vm实例。组件和vm实例之间是继承关系
+https://blog.csdn.net/zyx042299/article/details/128167185
+
+  
+
+### 27 webpack打包
+
+### 28 export import
+import x from 'abc..js'
+这种导入要求 abc.js模块中有 export default 默认导出，x作为消费者导入abc.js模块默认导出的名称，x可以随意更换为你喜欢的名字
+import { y } from 'abc..js'
+这种导入要求 abc.js模块中必需有 export y 命名导出，y是消费者要从abc.js模块导入的命名元素，y不可更换为其他名称。如果你实在是感觉x不顺眼，那可以采用下面的方式对y重命名
+
+import { y as xxx } from 'abc..js'，此处xxx就是重命名的新名称
+import x,{ y } from 'abc..js'
+这种导入要求 abc.js模块中有 export default 默认导出并且有y的命名导出 
+
+### 29 Js中this的多种情况
+
+### 30. ... 是扩展运算符 
+扩展语法。对数组和对象而言，就是将运算符后面的变量里东西每一项拆下来。
+iClick3() {
+	let iArray = ['1', '2', '3'];
+	console.log(['0', ...iArray, '4']);
+	// 打印结果  ["0", "1", "2", "3", "4"]
+}
+数组的合并：
+iClick7() {
+	var arr1 = [0, 1, 2];
+	var arr2 = [3, 4, 5];
+	console.log([...arr1, ...arr2]);
+	//  打印结果 [0, 1, 2, 3, 4, 5]
+},
+
+
+### computed与watch的区别
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
 
